@@ -1,9 +1,9 @@
 <div align="center">
  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
 
-  # Desenvolvimento Web III - API RESTful com NestJS
+  # ESTUDOS AVANÇADOS DE PROGRAMAÇÃO
 
-  **Bacharelado em Sistemas de Informação**<br>
+  **TECNOLOGIA EM ANÁLISE E DESENVOLVIMENTO DE SISTEMAS**<br>
   Instituto Federal do Paraná (IFPR) - Campus Irati
 
   <div style="display: flex; justify-content: center; gap: 10px; margin: 20px 0;">
@@ -81,3 +81,70 @@ graph LR
     J --> A;
     C -- Negado --> J;
 ```
+### Conceitos Aplicados
+
+* **DTOs (Data Transfer Objects):** Definem a forma como os dados são enviados pela rede (ex: `create-task.dto.ts`).
+* **Pipes:** Utilizados para validação e transformação de dados (ex: `ValidationPipe` global).
+* **Guards:** Determinam se uma requisição deve ser tratada pelo manipulador de rota (ex: `auth-token.guard.ts` para proteger rotas com JWT).
+* **Interceptors:** Interceptam a execução antes e depois do método (ex: `logger.interceptor.ts`, `add-header.interceptor.ts`).
+* **Middleware:** Funções executadas antes do manipulador de rota (ex: `logger.middleware.ts`).
+* **Exception Filters:** Camada responsável pelo tratamento de erros não capturados (ex: `http-exception.filter.ts`).
+
+---
+
+## 🚀 Instalação e Execução
+
+Siga os passos abaixo para executar o projeto localmente.
+
+### Pré-requisitos
+
+* Node.js (v18 ou superior)
+* npm ou yarn
+
+### 1. Configuração do Backend
+
+```bash
+# Clone este repositório
+$ git clone [https://github.com/VictorHJSantiago/projeto_nest.git](https://github.com/VictorHJSantiago/projeto_nest.git)
+
+# Acesse a pasta do projeto
+$ cd projeto_nest
+
+# Instale as dependências
+$ npm install
+
+# Configure as variáveis de ambiente
+# Crie um arquivo .env na raiz e adicione:
+# DATABASE_URL="file:./dev.db"
+# JWT_SECRET="sua_chave_secreta_md5"
+
+# Execute as migrações do banco de dados (Prisma)
+$ npx prisma migrate dev
+
+# Inicie o servidor de desenvolvimento
+$ npm run start:dev
+```
+
+### 2. Configuração do Frontend
+
+```bash
+# Em um novo terminal, acesse a pasta frontend
+$ cd frontend
+
+# Instale as dependências
+$ npm install
+
+# Inicie a aplicação React
+$ npm start
+```
+<div align="center"> <h2>👨‍💻 Autor</h2> <p>Desenvolvido por <strong>Victor H. J. Santiago</strong>
+
+
+Sob orientação do <strong>Prof. Dr. Robyson Aggio</strong>.</p> <p><strong>Instituto Federal do Paraná - Campus Irati</strong>
+
+
+<em>Disciplina de Desenvolvimento Web III</em></p>
+
+<sub>Feito com 💙 e NestJS.</sub>
+
+</div>
