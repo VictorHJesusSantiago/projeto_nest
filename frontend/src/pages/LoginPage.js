@@ -28,7 +28,7 @@ const LoginPage = () => {
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)', padding: '1rem' }}>
       <div className="form-container" style={{ width: '100%', maxWidth: '450px', margin: '0' }}>
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <h1 className="logo" style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>EduManager</h1>
+          <h1 className="logo" style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>Edu Sys</h1>
           <p style={{ color: 'var(--text-muted)' }}>Bem-vindo de volta! Faça login para continuar.</p>
         </div>
 
