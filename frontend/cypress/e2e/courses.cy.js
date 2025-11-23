@@ -18,7 +18,6 @@ describe('Gerenciamento de Cursos', () => {
     cy.get('input[name="name"]').type('Curso de Teste E2E');
     cy.get('textarea[name="description"]').type('Descrição do curso de teste');
     
-    // CORREÇÃO AQUI: 'Salvar' em vez de 'Salvar Dados'
     cy.contains('button', 'Salvar').click();
 
     cy.url().should('include', '/courses');
@@ -32,7 +31,6 @@ describe('Gerenciamento de Cursos', () => {
         if (doc.querySelectorAll('tbody tr').length === 0) {
             cy.contains('a', 'Novo Curso').click();
             cy.get('input[name="name"]').type('Curso Temporário');
-            // CORREÇÃO AQUI
             cy.contains('button', 'Salvar').click();
         }
     });
@@ -42,7 +40,6 @@ describe('Gerenciamento de Cursos', () => {
     });
 
     cy.get('input[name="name"]').clear().type('Curso Editado Cypress');
-    // CORREÇÃO AQUI
     cy.contains('button', 'Salvar').click();
 
     cy.contains('Curso Editado Cypress').should('be.visible');
@@ -55,7 +52,6 @@ describe('Gerenciamento de Cursos', () => {
         if (doc.querySelectorAll('tbody tr').length === 0) {
             cy.contains('a', 'Novo Curso').click();
             cy.get('input[name="name"]').type('Curso Para Deletar');
-            // CORREÇÃO AQUI
             cy.contains('button', 'Salvar').click();
         }
     });
