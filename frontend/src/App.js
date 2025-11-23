@@ -5,9 +5,12 @@ import ProtectedRoute from './components/ProtectedRoute';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-// CORREÇÃO: Importar de 'components' ao invés de 'pages'
-import TeachersListPage from './components/TeachersListPage'; 
+import TeachersListPage from './components/TeachersListPage';
 import TeacherDetailPage from './components/TeacherDetailPage';
+import StudentsListPage from './components/StudentsListPage';
+import StudentForm from './components/StudentForm';
+import CoursesListPage from './components/CoursesListPage';
+import CourseForm from './components/CourseForm';
 
 function App() {
   return (
@@ -26,6 +29,12 @@ function App() {
         <Route index element={<HomePage />} />
         <Route path="teachers" element={<TeachersListPage />} />
         <Route path="teachers/:id" element={<TeacherDetailPage />} />
+        <Route path="students" element={<StudentsListPage />} />
+        <Route path="students/new" element={<StudentForm />} />
+        <Route path="students/:id" element={<StudentForm />} />
+        <Route path="courses" element={<CoursesListPage />} />
+        <Route path="courses/new" element={<CourseForm />} />
+        <Route path="courses/:id" element={<CourseForm />} />
       </Route>
     </Routes>
   );
