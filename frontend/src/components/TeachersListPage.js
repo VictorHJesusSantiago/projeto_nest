@@ -1,95 +1,98 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import api from '../services/api';
-import TeacherForm from './TeacherForm';
+import { getTeachers, deleteTeacher } from '../services/api';
 
 const TeachersListPage = () => {
   const [teachers, setTeachers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(null);
 
-  const fetchTeachers = async () => {
+  useEffect(() => {
+    loadTeachers();
+  }, []);
+
+  const loadTeachers = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      setError('');
-      const { data } = await api.get('/teachers');
+      const data = await getTeachers();
       setTeachers(data);
     } catch (err) {
-      setError('Falha ao buscar professores.');
-      console.error(err);
+      setError('Falha ao carregar professores.');
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchTeachers();
-  }, []);
-
-  const handleCreateTeacher = async (teacherData) => {
-    try {
-      setError('');
-      await api.post('/teachers', teacherData);
-      fetchTeachers();
-    } catch (err) {
-      setError('Falha ao criar professor.');
-      console.error(err);
-    }
-  };
-
-  const handleDeleteTeacher = async (id) => {
-    if (window.confirm('Tem certeza que deseja excluir este professor?')) {
+  const handleDelete = async (id) => {
+    if (window.confirm('Deseja realmente excluir este professor?')) {
       try {
-        setError('');
-        await api.delete(`/teachers/${id}`);
-        fetchTeachers();
+        await deleteTeacher(id);
+        loadTeachers();
       } catch (err) {
-        setError('Falha ao excluir professor.');
-        console.error(err);
+        alert('Erro ao excluir.');
       }
     }
   };
 
-  if (loading) {
-    return <div className="loading">Carregando professores...</div>;
-  }
-
   return (
-    <div>
-      <div className="card">
-        <h2>Adicionar Novo Professor</h2>
-        {error && <div className="error-message">{error}</div>}
-        <TeacherForm onSubmit={handleCreateTeacher} buttonText="Adicionar Professor" />
+    <div className="container">
+      <div className="page-header">
+        <div>
+          <h2>Professores</h2>
+          <p>Gerencie o corpo docente da instituição.</p>
+        </div>
+        <Link to="/teachers/new" className="btn btn-primary">
+          <svg className="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"/></svg>
+          Novo Professor
+        </Link>
       </div>
 
-      <div className="card">
-        <h2>Lista de Professores</h2>
-        {teachers.length === 0 ? (
+      {loading ? (
+        <div className="empty-state">
+          <div className="spinner" style={{ borderColor: 'var(--primary) transparent var(--primary) transparent', margin: '0 auto 1rem' }}></div>
+          <p>Carregando dados...</p>
+        </div>
+      ) : error ? (
+        <div className="error">{error}</div>
+      ) : teachers.length === 0 ? (
+        <div className="empty-state">
           <p>Nenhum professor cadastrado.</p>
-        ) : (
-          <div className="list">
-            {teachers.map((teacher) => (
-              <div key={teacher.id} className="list-item">
-                <div className="list-item-content">
-                  <strong>{teacher.name}</strong>
-                  <span>{teacher.subject}</span>
-                </div>
-                <div className="list-item-actions">
-                  <Link to={`/teachers/${teacher.id}`} className="btn btn-primary">
-                    Ver Detalhes
-                  </Link>
-                  <button
-                    onClick={() => handleDeleteTeacher(teacher.id)}
-                    className="btn btn-danger"
-                  >
-                    Excluir
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+        </div>
+      ) : (
+        <div className="table-responsive">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Disciplina</th>
+                <th style={{ textAlign: 'right' }}>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {teachers.map((teacher) => (
+                <tr key={teacher.id}>
+                  <td>#{teacher.id}</td>
+                  <td style={{ fontWeight: '600' }}>{teacher.name}</td>
+                  <td>
+                    <span style={{ background: '#e0e7ff', color: '#4338ca', padding: '0.2rem 0.6rem', borderRadius: '1rem', fontSize: '0.75rem', fontWeight: '600' }}>
+                      {teacher.subject}
+                    </span>
+                  </td>
+                  <td style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                    <Link to={`/teachers/${teacher.id}`} className="btn btn-secondary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}>
+                      Detalhes
+                    </Link>
+                    <button onClick={() => handleDelete(teacher.id)} className="btn btn-danger" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}>
+                      Excluir
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 };

@@ -12,6 +12,7 @@ const CoursesListPage = () => {
   }, []);
 
   const loadCourses = async () => {
+    setLoading(true);
     try {
       const data = await getCourses();
       setCourses(data);
@@ -33,36 +34,63 @@ const CoursesListPage = () => {
     }
   };
 
-  if (loading) return <p>Carregando...</p>;
-  if (error) return <p>{error}</p>;
-
   return (
     <div className="container">
-      <h2>Lista de Cursos</h2>
-      <Link to="/courses/new" className="btn-primary">Novo Curso</Link>
-      <table className="table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nome</th>
-            <th>Descrição</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {courses.map((course) => (
-            <tr key={course.id}>
-              <td>{course.id}</td>
-              <td>{course.name}</td>
-              <td>{course.description || '-'}</td>
-              <td>
-                <Link to={`/courses/${course.id}`} className="btn-secondary">Editar</Link>
-                <button onClick={() => handleDelete(course.id)} className="btn-danger">Excluir</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div className="page-header">
+        <div>
+          <h2>Cursos</h2>
+          <p>Gerencie a grade curricular e disciplinas ofertadas.</p>
+        </div>
+        <Link to="/courses/new" className="btn btn-primary">
+          <svg className="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"/></svg>
+          Novo Curso
+        </Link>
+      </div>
+
+      {loading ? (
+        <div className="empty-state">
+          <div className="spinner" style={{ borderColor: 'var(--primary) transparent var(--primary) transparent', margin: '0 auto 1rem' }}></div>
+          <p>Carregando dados...</p>
+        </div>
+      ) : error ? (
+        <div className="error">{error}</div>
+      ) : courses.length === 0 ? (
+        <div className="empty-state">
+          <p>Nenhum curso encontrado.</p>
+        </div>
+      ) : (
+        <div className="table-responsive">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nome do Curso</th>
+                <th>Descrição</th>
+                <th style={{ textAlign: 'right' }}>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {courses.map((course) => (
+                <tr key={course.id}>
+                  <td>#{course.id}</td>
+                  <td style={{ fontWeight: '600', color: 'var(--primary-dark)' }}>{course.name}</td>
+                  <td style={{ maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {course.description || <span style={{ color: '#9ca3af', fontStyle: 'italic' }}>Sem descrição</span>}
+                  </td>
+                  <td style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                    <Link to={`/courses/${course.id}`} className="btn btn-secondary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}>
+                      Editar
+                    </Link>
+                    <button onClick={() => handleDelete(course.id)} className="btn btn-danger" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}>
+                      Excluir
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 };

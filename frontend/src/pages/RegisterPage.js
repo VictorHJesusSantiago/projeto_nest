@@ -1,74 +1,84 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import useAuth from '../hooks/useAuth';
+import { register } from '../services/api';
+import { useNavigate, Link } from 'react-router-dom';
 
 const RegisterPage = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const { register } = useAuth();
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({ name: '', email: '', password: '' });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    if (password.length < 6) {
-      setError('A senha deve ter no mínimo 6 caracteres');
-      return;
-    }
+    setLoading(true);
     try {
-      await register(name, email, password);
-      navigate('/');
+      await register(formData);
+      alert('Registro realizado com sucesso! Faça login.');
+      navigate('/login');
     } catch (err) {
-      setError(err.message);
+      setError('Erro ao registrar. Tente novamente.');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="auth-form">
-      <h1>Registrar</h1>
-      {error && <div className="error-message">{error}</div>}
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="name">Nome</label>
-          <input
-            type="text"
-            id="name"
-            className="form-control"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)', padding: '1rem' }}>
+      <div className="form-container" style={{ width: '100%', maxWidth: '450px', margin: '0' }}>
+        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+          <h1 className="logo" style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>Criar Conta</h1>
+          <p style={{ color: 'var(--text-muted)' }}>Preencha os dados abaixo para começar.</p>
         </div>
-        <div className="form-group">
-          <label htmlFor="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            className="form-control"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+
+        {error && <div className="error">{error}</div>}
+
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Nome Completo</label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="Ex: João Silva"
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>E-mail</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="seu@email.com"
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>Senha</label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Mínimo 6 caracteres"
+              required
+            />
+          </div>
+          <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '0.8rem' }} disabled={loading}>
+            {loading ? <><div className="spinner"></div> Criando...</> : 'Criar Conta'}
+          </button>
+        </form>
+
+        <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+          Já possui conta? <Link to="/login" style={{ color: 'var(--primary)', fontWeight: '600' }}>Fazer Login</Link>
         </div>
-        <div className="form-group">
-          <label htmlFor="password">Senha (mín. 6 caracteres)</label>
-          <input
-            type="password"
-            id="password"
-            className="form-control"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit" className="btn btn-primary btn-block">
-          Criar Conta
-        </button>
-      </form>
-      <div className="switch-auth">
-        Já tem uma conta? <Link to="/login">Faça login</Link>
       </div>
     </div>
   );

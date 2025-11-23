@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import { createStudent, getStudentById, updateStudent } from '../services/api';
 
 const StudentForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    name: '',
-    email: ''
-  });
+  const [formData, setFormData] = useState({ name: '', email: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -21,7 +18,7 @@ const StudentForm = () => {
           const data = await getStudentById(id);
           setFormData({ name: data.name, email: data.email });
         } catch (err) {
-          setError('Erro ao carregar dados do estudante.');
+          setError('Erro ao carregar dados.');
         }
       };
       fetchStudent();
@@ -46,41 +43,58 @@ const StudentForm = () => {
       }
       navigate('/students');
     } catch (err) {
-      setError('Erro ao salvar estudante. Verifique os dados.');
+      setError('Erro ao salvar. Verifique os dados.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="form-container">
-      <h2>{isEditMode ? 'Editar Estudante' : 'Novo Estudante'}</h2>
-      {error && <p className="error">{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Nome:</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-          />
+    <div className="container">
+      <div className="form-container">
+        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+          <h2>{isEditMode ? 'Editar Estudante' : 'Novo Estudante'}</h2>
+          <p>Preencha os dados abaixo para {isEditMode ? 'atualizar' : 'cadastrar'} o aluno.</p>
         </div>
-        <div className="form-group">
-          <label>Email:</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <button type="submit" disabled={loading}>
-          {loading ? 'Salvando...' : 'Salvar'}
-        </button>
-      </form>
+
+        {error && <div className="error" style={{ padding: '1rem', background: '#fee2e2', color: '#dc2626', borderRadius: '0.5rem', marginBottom: '1.5rem', border: '1px solid #fecaca' }}>{error}</div>}
+
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Nome Completo</label>
+            <input
+              type="text"
+              name="name"
+              placeholder="Ex: João da Silva"
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          
+          <div className="form-group">
+            <label>Email</label>
+            <input
+              type="email"
+              name="email"
+              placeholder="aluno@escola.com"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
+            <Link to="/students" className="btn btn-secondary" style={{ flex: 1 }}>
+              Cancelar
+            </Link>
+            <button type="submit" className="btn btn-primary" style={{ flex: 1 }} disabled={loading}>
+              {loading && <div className="spinner"></div>}
+              {loading ? 'Salvando...' : 'Salvar Dados'}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
