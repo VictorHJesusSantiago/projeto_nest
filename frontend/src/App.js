@@ -5,8 +5,9 @@ import ProtectedRoute from './components/ProtectedRoute';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-import TeachersListPage from './pages/TeachersListPage';
-import TeacherDetailPage from './pages/TeacherDetailPage';
+// CORREÇÃO: Importar de 'components' ao invés de 'pages'
+import TeachersListPage from './components/TeachersListPage'; 
+import TeacherDetailPage from './components/TeacherDetailPage';
 
 function App() {
   return (
