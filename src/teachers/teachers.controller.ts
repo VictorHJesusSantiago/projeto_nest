@@ -9,7 +9,6 @@ import {
   ParseIntPipe,
   Query,
   UseInterceptors,
-  UseGuards,
 } from '@nestjs/common';
 import { TeachersService } from './teachers.service';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
@@ -17,10 +16,8 @@ import { UpdateTeacherDto } from './dto/update-teacher.dto';
 import { PaginationDto } from '../common/dto/pagination.dto';
 import { BodyCreateTeacherInterceptor } from '../common/interceptors/body-create-teacher.interceptor';
 import { AddHeaderInterceptor } from '../common/interceptors/add-header.interceptor';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('teachers')
-@UseGuards(JwtAuthGuard)
 export class TeachersController {
   constructor(private readonly teachersService: TeachersService) {}
 

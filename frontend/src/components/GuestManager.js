@@ -1,18 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import GuestForm from './GuestForm';
 
 const GuestManager = ({ teacherId, initialGuests = [] }) => {
   const [guests, setGuests] = useState(initialGuests);
   const [editingGuestId, setEditingGuestId] = useState(null);
+  const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    setGuests(initialGuests);
+  }, [initialGuests]);
 
   const refreshGuests = async () => {
     try {
       const { data } = await api.get(`/teachers/${teacherId}`);
       setGuests(data.guests || []);
     } catch (err) {
-      setError('Falha ao atualizar lista de convidados.');
+      console.error(err);
     }
   };
 
@@ -20,9 +25,10 @@ const GuestManager = ({ teacherId, initialGuests = [] }) => {
     try {
       setError('');
       await api.post('/guests', { ...guestData, teacherId });
+      setIsCreating(false);
       refreshGuests();
     } catch (err) {
-      setError('Falha ao adicionar convidado.');
+      setError('Erro ao adicionar convidado.');
     }
   };
 
@@ -33,79 +39,113 @@ const GuestManager = ({ teacherId, initialGuests = [] }) => {
       setEditingGuestId(null);
       refreshGuests();
     } catch (err) {
-      setError('Falha ao atualizar convidado.');
+      setError('Erro ao atualizar convidado.');
     }
   };
 
   const handleDeleteGuest = async (guestId) => {
-    if (window.confirm('Tem certeza que deseja excluir este convidado?')) {
+    if (window.confirm('Tem certeza que deseja excluir?')) {
       try {
         setError('');
         await api.delete(`/guests/${guestId}`);
         refreshGuests();
       } catch (err) {
-        setError('Falha ao excluir convidado.');
+        setError('Erro ao excluir convidado.');
       }
     }
   };
 
   return (
-    <div className="card">
-      <h3>Gerenciar Convidados</h3>
-      {error && <div className="error-message">{error}</div>}
+    <div className="mt-4">
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h3>Lista de Convidados</h3>
+        {!isCreating && (
+          <button className="btn btn-primary btn-sm" onClick={() => setIsCreating(true)}>
+            + Novo Convidado
+          </button>
+        )}
+      </div>
 
-      <h4>Adicionar Novo Convidado</h4>
-      <GuestForm onSubmit={handleCreateGuest} buttonText="Adicionar Convidado" />
+      {error && <div className="alert alert-danger">{error}</div>}
 
-      <h4 style={{ marginTop: '30px' }}>Convidados Atuais</h4>
-      {guests.length === 0 ? (
-        <p>Nenhum convidado para este professor.</p>
-      ) : (
-        <div className="list">
-          {guests.map((guest) => (
-            <div key={guest.id} className="list-item">
-              {editingGuestId === guest.id ? (
-                <div style={{ width: '100%' }}>
-                  <GuestForm
-                    initialData={guest}
-                    buttonText="Atualizar"
-                    onSubmit={(data) => handleUpdateGuest(guest.id, data)}
-                  />
-                  <button
-                    onClick={() => setEditingGuestId(null)}
-                    className="btn btn-secondary"
-                    style={{ marginTop: '10px' }}
-                  >
-                    Cancelar
-                  </button>
-                </div>
-              ) : (
-                <>
-                  <div className="list-item-content">
-                    <strong>{guest.name}</strong>
-                    <span>
-                      RSVP: {guest.rsvp ? 'Sim' : 'Não'}
-                    </span>
-                  </div>
-                  <div className="list-item-actions">
-                    <button
-                      onClick={() => setEditingGuestId(guest.id)}
-                      className="btn btn-warning"
-                    >
-                      Editar
-                    </button>
-                    <button
-                      onClick={() => handleDeleteGuest(guest.id)}
-                      className="btn btn-danger"
-                    >
-                      Excluir
-                    </button>
-                  </div>
-                </>
-              )}
-            </div>
-          ))}
+      {/* Formulário de Criação (aparece no topo quando ativo) */}
+      {isCreating && (
+        <div className="card card-body mb-3">
+          <h5>Novo Convidado</h5>
+          <GuestForm 
+            onSubmit={handleCreateGuest} 
+            buttonText="Adicionar"
+          />
+          <button 
+            className="btn btn-secondary btn-sm mt-2" 
+            onClick={() => setIsCreating(false)}
+          >
+            Cancelar
+          </button>
         </div>
+      )}
+
+      {/* Tabela Padrão de Listagem */}
+      {guests.length === 0 ? (
+        <p className="text-muted">Nenhum convidado cadastrado.</p>
+      ) : (
+        <table className="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Status RSVP</th>
+              <th style={{ width: '200px' }}>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {guests.map((guest) => (
+              <tr key={guest.id}>
+                {editingGuestId === guest.id ? (
+                  <td colSpan="3">
+                    <div className="card card-body">
+                      <GuestForm
+                        initialData={guest}
+                        buttonText="Salvar"
+                        onSubmit={(data) => handleUpdateGuest(guest.id, data)}
+                      />
+                      <button 
+                        className="btn btn-secondary btn-sm mt-2"
+                        onClick={() => setEditingGuestId(null)}
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </td>
+                ) : (
+                  <>
+                    <td>{guest.name}</td>
+                    <td>
+                      {guest.rsvp ? (
+                        <span className="badge bg-success">Confirmado</span>
+                      ) : (
+                        <span className="badge bg-warning text-dark">Pendente</span>
+                      )}
+                    </td>
+                    <td>
+                      <button 
+                        className="btn btn-sm btn-secondary me-2"
+                        onClick={() => setEditingGuestId(guest.id)}
+                      >
+                        Editar
+                      </button>
+                      <button 
+                        className="btn btn-sm btn-danger"
+                        onClick={() => handleDeleteGuest(guest.id)}
+                      >
+                        Excluir
+                      </button>
+                    </td>
+                  </>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
     </div>
   );

@@ -14,12 +14,10 @@ const TeacherDetailPage = () => {
   const fetchTeacher = async () => {
     try {
       setLoading(true);
-      setError('');
       const { data } = await api.get(`/teachers/${id}`);
       setTeacher(data);
     } catch (err) {
-      setError('Falha ao buscar detalhes do professor.');
-      console.error(err);
+      setError('Erro ao carregar professor.');
       if (err.response && err.response.status === 404) {
         navigate('/teachers');
       }
@@ -34,39 +32,34 @@ const TeacherDetailPage = () => {
 
   const handleUpdateTeacher = async (teacherData) => {
     try {
-      setError('');
       await api.patch(`/teachers/${id}`, teacherData);
-      fetchTeacher();
       alert('Professor atualizado com sucesso!');
+      fetchTeacher();
     } catch (err) {
-      setError('Falha ao atualizar professor.');
-      console.error(err);
+      alert('Erro ao atualizar professor.');
     }
   };
 
-  if (loading) {
-    return <div className="loading">Carregando detalhes...</div>;
-  }
-
-  if (error) {
-    return <div className="error-message">{error}</div>;
-  }
-
-  if (!teacher) {
-    return null;
-  }
+  if (loading) return <div className="container mt-3">Carregando...</div>;
+  if (error) return <div className="container mt-3 alert alert-danger">{error}</div>;
+  if (!teacher) return null;
 
   return (
-    <div>
-      <div className="card">
-        <h2>Detalhes do Professor</h2>
+    <div className="container mt-4">
+      <h2>Editar Professor</h2>
+      
+      {/* Container do Formulário Principal */}
+      <div className="mb-5">
         <TeacherForm
           onSubmit={handleUpdateTeacher}
           initialData={teacher}
-          buttonText="Atualizar Professor"
+          buttonText="Salvar Alterações"
         />
       </div>
 
+      <hr />
+
+      {/* Gerenciamento de Convidados */}
       <GuestManager teacherId={teacher.id} initialGuests={teacher.guests} />
     </div>
   );

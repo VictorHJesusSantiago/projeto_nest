@@ -7,6 +7,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import TeachersListPage from './components/TeachersListPage';
 import TeacherDetailPage from './components/TeacherDetailPage';
+import TeacherForm from './components/TeacherForm';
 import StudentsListPage from './components/StudentsListPage';
 import StudentForm from './components/StudentForm';
 import CoursesListPage from './components/CoursesListPage';
@@ -27,11 +28,15 @@ function App() {
         }
       >
         <Route index element={<HomePage />} />
+        
         <Route path="teachers" element={<TeachersListPage />} />
+        <Route path="teachers/new" element={<TeacherForm />} />
         <Route path="teachers/:id" element={<TeacherDetailPage />} />
+        
         <Route path="students" element={<StudentsListPage />} />
         <Route path="students/new" element={<StudentForm />} />
         <Route path="students/:id" element={<StudentForm />} />
+        
         <Route path="courses" element={<CoursesListPage />} />
         <Route path="courses/new" element={<CourseForm />} />
         <Route path="courses/:id" element={<CourseForm />} />
