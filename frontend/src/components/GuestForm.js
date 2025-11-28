@@ -17,6 +17,7 @@ const GuestForm = ({ onSubmit, initialData = null, buttonText = "Salvar" }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit({ name, rsvp });
+    
     if (!initialData) {
       setName('');
       setRsvp(false);
@@ -24,30 +25,33 @@ const GuestForm = ({ onSubmit, initialData = null, buttonText = "Salvar" }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="guest-form">
-      <div className="form-group">
-        <label htmlFor="guest-name">Nome do Convidado</label>
+    <form onSubmit={handleSubmit}>
+      <div className="mb-3">
+        <label className="form-label">Nome do Convidado</label>
         <input
           type="text"
-          id="guest-name"
           className="form-control"
+          name="name" 
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
         />
       </div>
-      <div className="form-group">
-        <div className="form-check">
+
+      <div className="mb-3 form-check">
+        <label className="form-check-label">
           <input
             type="checkbox"
-            id="guest-rsvp"
-            className="form-control checkbox"
+            className="form-check-input"
+            name="rsvp"
             checked={rsvp}
             onChange={(e) => setRsvp(e.target.checked)}
+            style={{ marginRight: '8px' }}
           />
-          <label htmlFor="guest-rsvp">Confirmou presença (RSVP)</label>
-        </div>
+          Confirmado (RSVP)
+        </label>
       </div>
+
       <button type="submit" className="btn btn-success">
         {buttonText}
       </button>

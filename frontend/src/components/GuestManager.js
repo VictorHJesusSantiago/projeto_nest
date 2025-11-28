@@ -28,6 +28,7 @@ const GuestManager = ({ teacherId, initialGuests = [] }) => {
       setIsCreating(false);
       refreshGuests();
     } catch (err) {
+      console.error(err);
       setError('Erro ao adicionar convidado.');
     }
   };
@@ -36,9 +37,10 @@ const GuestManager = ({ teacherId, initialGuests = [] }) => {
     try {
       setError('');
       await api.patch(`/guests/${guestId}`, guestData);
+      await refreshGuests();
       setEditingGuestId(null);
-      refreshGuests();
     } catch (err) {
+      console.error(err);
       setError('Erro ao atualizar convidado.');
     }
   };
@@ -50,6 +52,7 @@ const GuestManager = ({ teacherId, initialGuests = [] }) => {
         await api.delete(`/guests/${guestId}`);
         refreshGuests();
       } catch (err) {
+        console.error(err);
         setError('Erro ao excluir convidado.');
       }
     }
@@ -68,9 +71,8 @@ const GuestManager = ({ teacherId, initialGuests = [] }) => {
 
       {error && <div className="alert alert-danger">{error}</div>}
 
-      {/* Formulário de Criação (aparece no topo quando ativo) */}
       {isCreating && (
-        <div className="card card-body mb-3">
+        <div className="card card-body mb-3 guest-create-section">
           <h5>Novo Convidado</h5>
           <GuestForm 
             onSubmit={handleCreateGuest} 
@@ -85,7 +87,6 @@ const GuestManager = ({ teacherId, initialGuests = [] }) => {
         </div>
       )}
 
-      {/* Tabela Padrão de Listagem */}
       {guests.length === 0 ? (
         <p className="text-muted">Nenhum convidado cadastrado.</p>
       ) : (
