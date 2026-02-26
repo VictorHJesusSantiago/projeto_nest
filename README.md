@@ -255,7 +255,7 @@ projeto_nest/
 
 Desenvolvido sob orientação do **Prof. Dr. Robyson Aggio**
 Instituto Federal do Paraná — Campus Irati
-*Disciplina: Desenvolvimento Web III*
+*Disciplina: Estudos Avançados de Programação*
 
 <br>
 
